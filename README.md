@@ -120,6 +120,13 @@ glance/
 3. Build the frontend interface
 4. Deploy to production
 
+## Future Enhancements
+
+### Follow-up Questions (Post-MVP)
+- Allow users to ask follow-up questions about the user's tweets
+- Examples: "What projects are they working on?", "Are they hiring?", "What's their opinion on AI?"
+- Interactive chat interface for deeper insights
+
 This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
 
 ## Getting Started

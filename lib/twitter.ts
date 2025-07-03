@@ -132,7 +132,7 @@ export class TwitterAPI {
   /**
    * Main method to get summarizable tweets from a user
    */
-  async getTweetsForSummary(username: string, maxResults: number = 50): Promise<{
+  async getTweetsForSummary(username: string, maxResults: number = 10): Promise<{
     tweets: string[];
     userInfo: TwitterUser | null;
   }> {

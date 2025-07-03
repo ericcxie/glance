@@ -25,8 +25,8 @@ export default async function handler(
     // Initialize Twitter API
     const twitterAPI = createTwitterAPI();
 
-    // Get user and tweets
-    const { tweets, userInfo } = await twitterAPI.getTweetsForSummary(cleanHandle, 10);
+    // Get user and tweets (reduced to 5 for testing to save API calls)
+    const { tweets, userInfo } = await twitterAPI.getTweetsForSummary(cleanHandle, 5);
 
     if (!userInfo) {
       return res.status(404).json({

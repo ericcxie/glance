@@ -9,17 +9,18 @@ export interface SummarizeRequest {
 
 export interface SummarizeResponse {
   success: boolean;
-  data?: {
-    summary: string;
-    userInfo: {
-      username: string;
-      name: string;
+      data?: {
+      summary: string;
+      mood?: string;
+      userInfo: {
+        username: string;
+        name: string;
+      };
+      tweetCount: number;
+      topics?: string[];
+      sentiment?: string;
+      engagement?: string;
     };
-    tweetCount: number;
-    topics?: string[];
-    sentiment?: string;
-    engagement?: string;
-  };
   error?: string;
 }
 
@@ -99,18 +100,18 @@ export default async function handler(
         }
       });
     } else {
-      // Generate simple summary
-      const summary = await openAIService.generateSummary(tweets, {
+      // Generate Glance summary with mood
+      const glanceSummary = await openAIService.generateGlanceSummary(tweets, {
         username: userInfo.username,
         name: userInfo.name,
-        includeUserInfo: true,
-        maxLength: 250
+        includeUserInfo: true
       });
 
       return res.status(200).json({
         success: true,
         data: {
-          summary,
+          summary: glanceSummary.summary,
+          mood: glanceSummary.mood,
           userInfo: {
             username: userInfo.username,
             name: userInfo.name

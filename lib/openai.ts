@@ -7,6 +7,11 @@ export interface SummaryOptions {
   name?: string;
 }
 
+export interface GlanceSummary {
+  summary: string;
+  mood: string;
+}
+
 export class OpenAIService {
   private openai: OpenAI;
 
@@ -14,6 +19,83 @@ export class OpenAIService {
     this.openai = new OpenAI({
       apiKey: apiKey,
     });
+  }
+
+  /**
+   * Generate a Glance summary with mood tag - focused on what they've been up to
+   */
+  async generateGlanceSummary(
+    tweets: string[], 
+    options: SummaryOptions = {}
+  ): Promise<GlanceSummary> {
+    const { username, name } = options;
+
+    // If no tweets, return a default message
+    if (tweets.length === 0) {
+      return {
+        summary: "This user hasn't posted any recent tweets to summarize.",
+        mood: "quiet"
+      };
+    }
+
+    // Prepare the tweets for the prompt
+    const tweetsText = tweets
+      .slice(0, 10) // Reduced for API limits
+      .map((tweet, index) => `${index + 1}. ${tweet}`)
+      .join('\n');
+
+    const userInfo = username ? `@${username}${name ? ` (${name})` : ''}` : 'This user';
+    
+    const prompt = `Analyze the following recent tweets and provide a JSON response with a mood tag and summary focused on what they've been up to.
+
+Recent tweets from ${userInfo}:
+${tweetsText}
+
+Focus on their recent activities like:
+- What they're building or working on
+- Places they're traveling to
+- Life updates or personal news
+- Projects they're excited about
+- Current interests or hobbies
+
+Please provide a JSON response with this exact structure:
+{
+  "mood": "one simple mood word like: excited, focused, traveling, building, reflective, busy, chill, creative, etc.",
+  "summary": "2-3 sentences about what they've been up to recently - their activities, projects, or life updates"
+}
+
+Response:`;
+
+    try {
+      const response = await this.openai.chat.completions.create({
+        model: 'gpt-3.5-turbo',
+        messages: [{ role: 'user', content: prompt }],
+        max_tokens: 120,
+        temperature: 0.7,
+      });
+
+      const content = response.choices[0]?.message?.content?.trim();
+      
+      if (!content) {
+        throw new Error('No summary generated');
+      }
+
+      try {
+        const parsed = JSON.parse(content);
+        return {
+          summary: parsed.summary || content,
+          mood: parsed.mood || 'neutral'
+        };
+      } catch (parseError) {
+        return {
+          summary: content,
+          mood: 'neutral'
+        };
+      }
+    } catch (error) {
+      console.error('Error generating Glance summary:', error);
+      throw new Error('Failed to generate summary');
+    }
   }
 
   /**
@@ -103,7 +185,7 @@ Summary:`;
     }
 
     const tweetsText = tweets
-      .slice(0, 20)
+      .slice(0, 10) // Reduced from 20 to save API calls
       .map((tweet, index) => `${index + 1}. ${tweet}`)
       .join('\n');
 
