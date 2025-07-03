@@ -16,8 +16,7 @@
     <br><br>
 </div>
 
-<!-- ![preview](https://github.com/user/glance/assets/preview.png) -->
-_Add a preview image here once available_
+![Screenshot 2025-07-03 at 17 46 46@2x](https://github.com/user-attachments/assets/91175bcf-2bc3-4ea5-8321-16cb2325ffef)
 
 ## What is Glance?
 
