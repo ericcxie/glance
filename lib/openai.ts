@@ -40,7 +40,7 @@ export class OpenAIService {
 
     // Prepare the tweets for the prompt
     const tweetsText = tweets
-      .slice(0, 10) // Reduced for API limits
+      .slice(0, 5) // Limit to 5 tweets to match Twitter API limits
       .map((tweet, index) => `${index + 1}. ${tweet}`)
       .join('\n');
 
@@ -58,17 +58,17 @@ Focus on their recent activities like:
 - Projects they're excited about
 - Current interests or hobbies
 
-Please provide a JSON response with this exact structure:
+Please provide a JSON response with this exact structure (no markdown formatting):
 {
   "mood": "one simple mood word like: excited, focused, traveling, building, reflective, busy, chill, creative, etc.",
   "summary": "2-3 sentences about what they've been up to recently - their activities, projects, or life updates"
 }
 
-Response:`;
+Return only the JSON object, no additional text or markdown formatting:`;
 
     try {
       const response = await this.openai.chat.completions.create({
-        model: 'gpt-3.5-turbo',
+        model: 'gpt-4o-mini',
         messages: [{ role: 'user', content: prompt }],
         max_tokens: 120,
         temperature: 0.7,
@@ -81,12 +81,19 @@ Response:`;
       }
 
       try {
-        const parsed = JSON.parse(content);
+        // Clean up markdown formatting if present
+        let cleanContent = content;
+        if (content.includes('```json')) {
+          cleanContent = content.replace(/```json\n?/g, '').replace(/```/g, '').trim();
+        }
+        
+        const parsed = JSON.parse(cleanContent);
         return {
           summary: parsed.summary || content,
           mood: parsed.mood || 'neutral'
         };
       } catch (parseError) {
+        console.error('JSON parsing failed:', parseError);
         return {
           summary: content,
           mood: 'neutral'
@@ -114,7 +121,7 @@ Response:`;
 
     // Prepare the tweets for the prompt
     const tweetsText = tweets
-      .slice(0, 20) // Limit to first 20 tweets to avoid token limits
+      .slice(0, 5) // Limit to 5 tweets to match Twitter API limits
       .map((tweet, index) => `${index + 1}. ${tweet}`)
       .join('\n');
 
@@ -137,7 +144,7 @@ Summary:`;
 
     try {
       const response = await this.openai.chat.completions.create({
-        model: 'gpt-3.5-turbo',
+        model: 'gpt-4o-mini',
         messages: [
           {
             role: 'user',
@@ -185,7 +192,7 @@ Summary:`;
     }
 
     const tweetsText = tweets
-      .slice(0, 10) // Reduced from 20 to save API calls
+      .slice(0, 5) // Limit to 5 tweets to match Twitter API limits
       .map((tweet, index) => `${index + 1}. ${tweet}`)
       .join('\n');
 
@@ -208,7 +215,7 @@ Analysis:`;
 
     try {
       const response = await this.openai.chat.completions.create({
-        model: 'gpt-3.5-turbo',
+        model: 'gpt-4o-mini',
         messages: [
           {
             role: 'user',

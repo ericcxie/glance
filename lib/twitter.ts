@@ -76,7 +76,7 @@ export class TwitterAPI {
   /**
    * Get recent tweets from a user
    */
-  async getUserTweets(userId: string, maxResults: number = 50): Promise<Tweet[]> {
+  async getUserTweets(userId: string, maxResults: number = 5): Promise<Tweet[]> {
     try {
       const response = await axios.get(
         `${this.baseUrl}/users/${userId}/tweets`,
@@ -132,7 +132,7 @@ export class TwitterAPI {
   /**
    * Main method to get summarizable tweets from a user
    */
-  async getTweetsForSummary(username: string, maxResults: number = 10): Promise<{
+  async getTweetsForSummary(username: string, maxResults: number = 5): Promise<{
     tweets: string[];
     userInfo: TwitterUser | null;
   }> {
