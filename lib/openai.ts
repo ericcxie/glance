@@ -1,4 +1,4 @@
-import OpenAI from 'openai';
+import OpenAI from "openai";
 
 export interface SummaryOptions {
   maxLength?: number;
@@ -9,7 +9,7 @@ export interface SummaryOptions {
 
 export interface GlanceSummary {
   summary: string;
-  mood: string;
+  tags: string[];
 }
 
 export class OpenAIService {
@@ -22,10 +22,10 @@ export class OpenAIService {
   }
 
   /**
-   * Generate a Glance summary with mood tag - focused on what they've been up to
+   * Generate a Glance summary with topic tags - focused on what they've been up to
    */
   async generateGlanceSummary(
-    tweets: string[], 
+    tweets: string[],
     options: SummaryOptions = {}
   ): Promise<GlanceSummary> {
     const { username, name } = options;
@@ -34,7 +34,7 @@ export class OpenAIService {
     if (tweets.length === 0) {
       return {
         summary: "This user hasn't posted any recent tweets to summarize.",
-        mood: "quiet"
+        tags: ["quiet"],
       };
     }
 
@@ -42,11 +42,13 @@ export class OpenAIService {
     const tweetsText = tweets
       .slice(0, 5) // Limit to 5 tweets to match Twitter API limits
       .map((tweet, index) => `${index + 1}. ${tweet}`)
-      .join('\n');
+      .join("\n");
 
-    const userInfo = username ? `@${username}${name ? ` (${name})` : ''}` : 'This user';
-    
-    const prompt = `Analyze the following recent tweets and provide a JSON response with a mood tag and summary focused on what they've been up to.
+    const userInfo = username
+      ? `@${username}${name ? ` (${name})` : ""}`
+      : "This user";
+
+    const prompt = `Analyze the following recent tweets and provide a JSON response with 3 topic tags and summary focused on what they've been up to.
 
 Recent tweets from ${userInfo}:
 ${tweetsText}
@@ -60,48 +62,53 @@ Focus on their recent activities like:
 
 Please provide a JSON response with this exact structure (no markdown formatting):
 {
-  "mood": "one simple mood word like: excited, focused, traveling, building, reflective, busy, chill, creative, etc.",
+  "tags": ["tag1", "tag2", "tag3"],
   "summary": "2-3 sentences about what they've been up to recently - their activities, projects, or life updates"
 }
+
+The tags should be 3 topic-related words that describe their interests, work, or focus areas (e.g., "AI", "Design", "UX", "Travel", "Startups", "Tech", "Photography", "Fitness", etc.).
 
 Return only the JSON object, no additional text or markdown formatting:`;
 
     try {
       const response = await this.openai.chat.completions.create({
-        model: 'gpt-4o-mini',
-        messages: [{ role: 'user', content: prompt }],
+        model: "gpt-4o-mini",
+        messages: [{ role: "user", content: prompt }],
         max_tokens: 120,
         temperature: 0.7,
       });
 
       const content = response.choices[0]?.message?.content?.trim();
-      
+
       if (!content) {
-        throw new Error('No summary generated');
+        throw new Error("No summary generated");
       }
 
       try {
         // Clean up markdown formatting if present
         let cleanContent = content;
-        if (content.includes('```json')) {
-          cleanContent = content.replace(/```json\n?/g, '').replace(/```/g, '').trim();
+        if (content.includes("```json")) {
+          cleanContent = content
+            .replace(/```json\n?/g, "")
+            .replace(/```/g, "")
+            .trim();
         }
-        
+
         const parsed = JSON.parse(cleanContent);
         return {
           summary: parsed.summary || content,
-          mood: parsed.mood || 'neutral'
+          tags: parsed.tags || ["general"],
         };
       } catch (parseError) {
-        console.error('JSON parsing failed:', parseError);
+        console.error("JSON parsing failed:", parseError);
         return {
           summary: content,
-          mood: 'neutral'
+          tags: ["general"],
         };
       }
     } catch (error) {
-      console.error('Error generating Glance summary:', error);
-      throw new Error('Failed to generate summary');
+      console.error("Error generating Glance summary:", error);
+      throw new Error("Failed to generate summary");
     }
   }
 
@@ -109,10 +116,15 @@ Return only the JSON object, no additional text or markdown formatting:`;
    * Generate a summary of tweets using OpenAI
    */
   async generateSummary(
-    tweets: string[], 
+    tweets: string[],
     options: SummaryOptions = {}
   ): Promise<string> {
-    const { maxLength = 200, includeUserInfo = false, username, name } = options;
+    const {
+      maxLength = 200,
+      includeUserInfo = false,
+      username,
+      name,
+    } = options;
 
     // If no tweets, return a default message
     if (tweets.length === 0) {
@@ -123,11 +135,14 @@ Return only the JSON object, no additional text or markdown formatting:`;
     const tweetsText = tweets
       .slice(0, 5) // Limit to 5 tweets to match Twitter API limits
       .map((tweet, index) => `${index + 1}. ${tweet}`)
-      .join('\n');
+      .join("\n");
 
     // Create the prompt
-    const userInfo = includeUserInfo && username ? `@${username}${name ? ` (${name})` : ''}` : 'This user';
-    
+    const userInfo =
+      includeUserInfo && username
+        ? `@${username}${name ? ` (${name})` : ""}`
+        : "This user";
+
     const prompt = `Analyze the following recent tweets and provide a concise summary in 2-3 sentences. 
 Focus on the user's main interests, current topics they're discussing, their general tone/sentiment, and any notable patterns or themes.
 
@@ -144,27 +159,27 @@ Summary:`;
 
     try {
       const response = await this.openai.chat.completions.create({
-        model: 'gpt-4o-mini',
+        model: "gpt-4o-mini",
         messages: [
           {
-            role: 'user',
-            content: prompt
-          }
+            role: "user",
+            content: prompt,
+          },
         ],
         max_tokens: 150,
         temperature: 0.7,
       });
 
       const summary = response.choices[0]?.message?.content?.trim();
-      
+
       if (!summary) {
-        throw new Error('No summary generated');
+        throw new Error("No summary generated");
       }
 
       return summary;
     } catch (error) {
-      console.error('Error generating summary:', error);
-      throw new Error('Failed to generate summary');
+      console.error("Error generating summary:", error);
+      throw new Error("Failed to generate summary");
     }
   }
 
@@ -172,7 +187,7 @@ Summary:`;
    * Generate a more detailed analysis if needed
    */
   async generateDetailedAnalysis(
-    tweets: string[], 
+    tweets: string[],
     options: SummaryOptions = {}
   ): Promise<{
     summary: string;
@@ -186,18 +201,20 @@ Summary:`;
       return {
         summary: "This user hasn't posted any recent tweets to analyze.",
         topics: [],
-        sentiment: 'neutral',
-        engagement: 'low'
+        sentiment: "neutral",
+        engagement: "low",
       };
     }
 
     const tweetsText = tweets
       .slice(0, 5) // Limit to 5 tweets to match Twitter API limits
       .map((tweet, index) => `${index + 1}. ${tweet}`)
-      .join('\n');
+      .join("\n");
 
-    const userInfo = username ? `@${username}${name ? ` (${name})` : ''}` : 'This user';
-    
+    const userInfo = username
+      ? `@${username}${name ? ` (${name})` : ""}`
+      : "This user";
+
     const prompt = `Analyze the following recent tweets and provide a structured analysis:
 
 Recent tweets from ${userInfo}:
@@ -215,21 +232,21 @@ Analysis:`;
 
     try {
       const response = await this.openai.chat.completions.create({
-        model: 'gpt-4o-mini',
+        model: "gpt-4o-mini",
         messages: [
           {
-            role: 'user',
-            content: prompt
-          }
+            role: "user",
+            content: prompt,
+          },
         ],
         max_tokens: 200,
         temperature: 0.5,
       });
 
       const content = response.choices[0]?.message?.content?.trim();
-      
+
       if (!content) {
-        throw new Error('No analysis generated');
+        throw new Error("No analysis generated");
       }
 
       try {
@@ -240,13 +257,13 @@ Analysis:`;
         return {
           summary: content,
           topics: [],
-          sentiment: 'neutral',
-          engagement: 'medium'
+          sentiment: "neutral",
+          engagement: "medium",
         };
       }
     } catch (error) {
-      console.error('Error generating detailed analysis:', error);
-      throw new Error('Failed to generate detailed analysis');
+      console.error("Error generating detailed analysis:", error);
+      throw new Error("Failed to generate detailed analysis");
     }
   }
 }
@@ -255,7 +272,7 @@ Analysis:`;
 export function createOpenAIService(): OpenAIService {
   const apiKey = process.env.OPENAI_API_KEY;
   if (!apiKey) {
-    throw new Error('OPENAI_API_KEY environment variable is required');
+    throw new Error("OPENAI_API_KEY environment variable is required");
   }
   return new OpenAIService(apiKey);
-} 
+}
