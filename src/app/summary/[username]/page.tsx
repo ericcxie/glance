@@ -9,6 +9,20 @@ import { SummaryView } from "@/components/SummaryView";
 import { ChatView } from "@/components/ChatView";
 import { Summary, Message } from "@/types";
 
+interface ApiResponse {
+  success: boolean;
+  data?: {
+    summary: string;
+    tags: string[];
+    userInfo: {
+      username: string;
+      name: string;
+    };
+    tweetCount: number;
+  };
+  error?: string;
+}
+
 export default function SummaryPage() {
   const params = useParams();
   const router = useRouter();
@@ -21,21 +35,6 @@ export default function SummaryPage() {
   const [chatLoading, setChatLoading] = useState(false);
   const [loading, setLoading] = useState(true);
 
-  const mockSummaries: Record<string, Omit<Summary, "handle" | "timestamp">> = {
-    "@alex_dev": {
-      text: "AI-focused developer building the future of software. Recently excited about new ML frameworks and startup challenges.",
-      tags: ["AI", "Dev", "Startups"],
-    },
-    "@sarah_design": {
-      text: "UX designer passionate about accessibility and inclusive design. Currently working on design systems for tech.",
-      tags: ["Design", "UX", "A11y"],
-    },
-    "@mike_crypto": {
-      text: "Crypto trader analyzing markets and DeFi protocols. Bullish on emerging blockchain technologies.",
-      tags: ["Crypto", "DeFi", "Trading"],
-    },
-  };
-
   useEffect(() => {
     if (username) {
       loadSummary(username);
@@ -47,56 +46,59 @@ export default function SummaryPage() {
   const loadSummary = async (handle: string) => {
     setLoading(true);
 
-    // Add @ if not present
-    const cleanHandle = handle.startsWith("@") ? handle : `@${handle}`;
+    try {
+      // Call the API to get the summary
+      const response = await fetch(
+        `/api/summarize?handle=${encodeURIComponent(handle)}`
+      );
+      const data: ApiResponse = await response.json();
 
-    // Try to load from recent summaries first
-    const saved = localStorage.getItem("glance-recent-summaries");
-    if (saved) {
-      try {
-        const recentSummaries: Summary[] = JSON.parse(saved);
-        const existingSummary = recentSummaries.find(
-          (s) => s.handle === cleanHandle
+      if (data.success && data.data) {
+        const apiSummary = data.data;
+        const newSummary: Summary = {
+          text: apiSummary.summary,
+          tags: apiSummary.tags,
+          handle: `@${apiSummary.userInfo.username}`,
+          timestamp: Date.now(),
+        };
+
+        setSummary(newSummary);
+
+        // Save to recent summaries
+        const saved = localStorage.getItem("glance-recent-summaries");
+        const recentSummaries = saved ? JSON.parse(saved) : [];
+        const updatedRecent = [
+          newSummary,
+          ...recentSummaries.filter(
+            (s: Summary) => s.handle !== newSummary.handle
+          ),
+        ].slice(0, 5);
+        localStorage.setItem(
+          "glance-recent-summaries",
+          JSON.stringify(updatedRecent)
         );
-        if (existingSummary) {
-          setSummary(existingSummary);
-          setLoading(false);
-          return;
-        }
-      } catch (e) {
-        console.error("Failed to load recent summaries:", e);
+      } else {
+        console.error("API Error:", data.error);
+        // Fallback to a default summary if API fails
+        setSummary({
+          text: "Unable to load summary. Please try again later.",
+          tags: ["Error"],
+          handle: `@${handle}`,
+          timestamp: Date.now(),
+        });
       }
+    } catch (error) {
+      console.error("Error fetching summary:", error);
+      // Fallback to a default summary if API fails
+      setSummary({
+        text: "Unable to load summary. Please try again later.",
+        tags: ["Error"],
+        handle: `@${handle}`,
+        timestamp: Date.now(),
+      });
+    } finally {
+      setLoading(false);
     }
-
-    // If not found in recent, create new summary (simulate API call)
-    await new Promise((resolve) => setTimeout(resolve, 1500));
-
-    const mockData = mockSummaries[cleanHandle] || {
-      text: "Active user sharing insights and engaging with their community through meaningful conversations.",
-      tags: ["General", "Community"],
-    };
-
-    const newSummary: Summary = {
-      ...mockData,
-      handle: cleanHandle,
-      timestamp: Date.now(),
-    };
-
-    setSummary(newSummary);
-
-    // Save to recent summaries
-    const updatedRecent = [
-      newSummary,
-      ...(saved
-        ? JSON.parse(saved).filter((s: Summary) => s.handle !== cleanHandle)
-        : []),
-    ].slice(0, 5);
-    localStorage.setItem(
-      "glance-recent-summaries",
-      JSON.stringify(updatedRecent)
-    );
-
-    setLoading(false);
   };
 
   const goHome = () => {

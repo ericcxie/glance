@@ -17,21 +17,6 @@ export default function GlancePage() {
   const [chatInput, setChatInput] = useState("");
   const [chatLoading, setChatLoading] = useState(false);
 
-  const mockSummaries: Record<string, Omit<Summary, "handle" | "timestamp">> = {
-    "@alex_dev": {
-      text: "AI-focused developer building the future of software. Recently excited about new ML frameworks and startup challenges.",
-      tags: ["AI", "Dev", "Startups"],
-    },
-    "@sarah_design": {
-      text: "UX designer passionate about accessibility and inclusive design. Currently working on design systems for tech.",
-      tags: ["Design", "UX", "A11y"],
-    },
-    "@mike_crypto": {
-      text: "Crypto trader analyzing markets and DeFi protocols. Bullish on emerging blockchain technologies.",
-      tags: ["Crypto", "DeFi", "Trading"],
-    },
-  };
-
   const reset = () => {
     setSummary(null);
     setHandle("");
@@ -82,8 +67,6 @@ export default function GlancePage() {
               setHandle={setHandle}
               loading={loading}
               setLoading={setLoading}
-              setSummary={setSummary}
-              mockSummaries={mockSummaries}
             />
           ) : (
             <div className="space-y-8">

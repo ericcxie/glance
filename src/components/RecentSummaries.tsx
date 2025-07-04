@@ -13,26 +13,6 @@ interface RecentSummariesProps {
 export const RecentSummaries = ({ onLoadSummary }: RecentSummariesProps) => {
   const [recentSummaries, setRecentSummaries] = useState<Summary[]>([]);
 
-  // Initialize with dummy data
-  const initializeDummyData = () => {
-    const dummyData: Summary[] = [
-      {
-        handle: "@alex_dev",
-        text: "AI-focused developer building the future of software. Recently excited about new ML frameworks and startup challenges.",
-        tags: ["AI", "Dev", "Startups"],
-        timestamp: Date.now() - 1000 * 60 * 30, // 30 minutes ago
-      },
-      {
-        handle: "@sarah_design",
-        text: "UX designer passionate about accessibility and inclusive design. Currently working on design systems for tech.",
-        tags: ["Design", "UX", "A11y"],
-        timestamp: Date.now() - 1000 * 60 * 60 * 2, // 2 hours ago
-      },
-    ];
-    setRecentSummaries(dummyData);
-    localStorage.setItem("glance-recent-summaries", JSON.stringify(dummyData));
-  };
-
   // Load recent summaries from localStorage on mount
   useEffect(() => {
     const saved = localStorage.getItem("glance-recent-summaries");
@@ -42,12 +22,8 @@ export const RecentSummaries = ({ onLoadSummary }: RecentSummariesProps) => {
         setRecentSummaries(parsedSummaries);
       } catch (e) {
         console.error("Failed to load recent summaries:", e);
-        // Initialize with dummy data if localStorage fails
-        initializeDummyData();
+        setRecentSummaries([]);
       }
-    } else {
-      // Initialize with dummy data if no saved data
-      initializeDummyData();
     }
   }, []);
 
