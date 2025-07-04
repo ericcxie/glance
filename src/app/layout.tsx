@@ -26,8 +26,19 @@ export default function RootLayout({
     <html lang="en">
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+        suppressHydrationWarning={true}
       >
         {children}
+        <footer className="fixed bottom-0 left-0 right-0 p-4 text-center">
+          <a
+            href="https://www.ericxie.ca/"
+            target="_blank"
+            rel="noopener noreferrer"
+            className=""
+          >
+            <p className="text-gray-400 text-sm">Built with {"<3"} by Eric</p>
+          </a>
+        </footer>
       </body>
     </html>
   );

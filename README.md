@@ -117,7 +117,7 @@ glance/
 │   ├── twitter.ts      # X API integration
 │   └── openai.ts       # OpenAI API integration
 ├── pages/
-│   └── api/
+│   └── api/            # Next.js API routes
 │       ├── health.ts   # Health check endpoint
 │       ├── summarize.ts # Main API endpoint
 │       └── tweets.ts   # Tweet fetching endpoint
@@ -139,7 +139,7 @@ glance/
 - **AI-Powered**: Uses OpenAI to generate natural language summaries
 - **Detailed Analysis**: Optional detailed breakdown with topics and sentiment
 - **Error Handling**: Comprehensive error handling for various scenarios
-- **Modern UI**: Built with Next.js and Tailwind CSS
+- **Full-Stack**: Built with Next.js (frontend + API routes) and Tailwind CSS
 
 ## Future Enhancements
 
