@@ -16,7 +16,7 @@
     <br><br>
 </div>
 
-<img width="1207" alt="Screenshot 2025-07-03 at 17 46 46@2x" src="https://github.com/user-attachments/assets/b665f90b-9897-4b0f-82a1-f9e1fda0b86a" />
+![Screenshot 2025-07-04 at 15 47 09@2x](https://github.com/user-attachments/assets/ed8ce578-b093-42c8-99f6-6e2d0f9f4b8b)
 
 ## What is Glance?
 
