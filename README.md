@@ -8,11 +8,10 @@
     <h4><i>Summarize anyone’s online X (Twitter) presence at a glance.</i></h4>
     <br>
     <img src="https://img.shields.io/badge/Next.js-000000?style=for-the-badge&logo=next.js&logoColor=white"/>
-    <img src="https://img.shields.io/badge/TypeScript-007ACC?style=for-the-badge&logo=typescript&logoColor=white"/>
-    <img src="https://img.shields.io/badge/tailwindcss-%2338B2AC.svg?style=for-the-badge&logo=tailwind-css&logoColor=white"/>
     <img src="https://img.shields.io/badge/OpenAI-412991?style=for-the-badge&logo=openai&logoColor=white"/>
     <img src="https://img.shields.io/badge/Twitter%20API-1DA1F2?style=for-the-badge&logo=twitter&logoColor=white"/>
-    <img src="https://img.shields.io/badge/Vercel-000000.svg?style=for-the-badge&logo=Vercel&logoColor=white"/>
+    <img src="https://img.shields.io/badge/Supabase-3ECF8E?style=for-the-badge&logo=supabase&logoColor=white"/>
+    <img src="https://img.shields.io/badge/Prisma-2D3748?style=for-the-badge&logo=prisma&logoColor=white"/> 
     <br><br>
 </div>
 
@@ -41,6 +40,7 @@ OPENAI_API_KEY=your_openai_api_key_here
 ### Getting API Keys
 
 #### Twitter API v2 Bearer Token:
+
 1. Go to [Twitter Developer Portal](https://developer.twitter.com/en/portal/dashboard)
 2. Create a new app or use an existing one
 3. Navigate to "Keys and Tokens"
@@ -48,6 +48,7 @@ OPENAI_API_KEY=your_openai_api_key_here
 5. Copy the Bearer Token to your `.env.local` file
 
 #### OpenAI API Key:
+
 1. Go to [OpenAI Platform](https://platform.openai.com/account/api-keys)
 2. Create a new API key
 3. Copy the API key to your `.env.local` file
@@ -55,17 +56,19 @@ OPENAI_API_KEY=your_openai_api_key_here
 ### Installation and Setup
 
 1. **Install dependencies**
+
    ```bash
    npm install
    ```
 
 2. **Start the development server**
+
    ```bash
    npm run dev
    ```
 
 3. **Open your browser**
-   
+
    Navigate to [http://localhost:3000](http://localhost:3000) to see the application.
 
 ## API Documentation
@@ -143,6 +146,7 @@ glance/
 ## Future Enhancements
 
 ### Follow-up Questions (Post-MVP)
+
 - Allow users to ask follow-up questions about the user's tweets
 - Examples: "What projects are they working on?", "Are they hiring?", "What's their opinion on AI?"
 - Interactive chat interface for deeper insights
