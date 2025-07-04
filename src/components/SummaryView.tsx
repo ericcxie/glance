@@ -2,6 +2,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { MessageCircle } from "lucide-react";
 import { XLogo } from "./XLogo";
+import { CopyLinkButton } from "./CopyLinkButton";
 import { Summary } from "@/types";
 
 interface SummaryViewProps {
@@ -41,8 +42,8 @@ export const SummaryView = ({
             ))}
           </div>
 
-          {/* Ask More Button */}
-          <div className="pt-4 border-t border-white/10">
+          {/* Action Buttons */}
+          <div className="pt-4 border-t border-white/10 space-y-3">
             <Button
               onClick={startChat}
               className="w-full bg-white/10 hover:bg-white/20 border-white/20 text-white rounded-2xl backdrop-blur-sm transition-all duration-300 group"
@@ -51,17 +52,11 @@ export const SummaryView = ({
               <MessageCircle className="w-4 h-4 mr-2" />
               Ask more about this person
             </Button>
+
+            <CopyLinkButton summary={summary} />
           </div>
         </div>
       </div>
-
-      <Button
-        onClick={reset}
-        variant="outline"
-        className="bg-white/5 border-white/20 text-gray-300 hover:bg-white/10 hover:text-white rounded-2xl backdrop-blur-sm transition-all duration-300 px-6"
-      >
-        Back
-      </Button>
     </div>
   );
 };

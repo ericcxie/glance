@@ -1,8 +1,10 @@
 import type React from "react";
+import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Loader2, ArrowRight } from "lucide-react";
 import { XLogo } from "./XLogo";
+import { RecentSummaries } from "./RecentSummaries";
 import { Summary } from "@/types";
 
 interface HandleInputFormProps {
@@ -11,7 +13,7 @@ interface HandleInputFormProps {
   loading: boolean;
   setLoading: (loading: boolean) => void;
   setSummary: (summary: Summary) => void;
-  mockSummaries: Record<string, Omit<Summary, "handle">>;
+  mockSummaries: Record<string, Omit<Summary, "handle" | "timestamp">>;
 }
 
 export const HandleInputForm = ({
@@ -22,6 +24,8 @@ export const HandleInputForm = ({
   setSummary,
   mockSummaries,
 }: HandleInputFormProps) => {
+  const router = useRouter();
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!handle.trim()) return;
@@ -35,11 +39,39 @@ export const HandleInputForm = ({
       tags: ["General", "Community"],
     };
 
-    setSummary({
+    const newSummary: Summary = {
       ...mockData,
       handle: cleanHandle,
-    });
+      timestamp: Date.now(),
+    };
+
+    // Save to recent summaries
+    const saved = localStorage.getItem("glance-recent-summaries");
+    const recentSummaries = saved ? JSON.parse(saved) : [];
+    const updatedRecent = [
+      newSummary,
+      ...recentSummaries.filter((s: Summary) => s.handle !== cleanHandle),
+    ].slice(0, 5);
+    localStorage.setItem(
+      "glance-recent-summaries",
+      JSON.stringify(updatedRecent)
+    );
+
+    // Navigate to the summary page
+    const username = cleanHandle.startsWith("@")
+      ? cleanHandle.slice(1)
+      : cleanHandle;
+    router.push(`/summary/${encodeURIComponent(username)}`);
+
     setLoading(false);
+  };
+
+  const loadRecentSummary = (summary: Summary) => {
+    // Navigate to the summary page instead of setting state
+    const username = summary.handle.startsWith("@")
+      ? summary.handle.slice(1)
+      : summary.handle;
+    router.push(`/summary/${encodeURIComponent(username)}`);
   };
 
   return (
@@ -90,6 +122,9 @@ export const HandleInputForm = ({
           </button>
         ))}
       </div>
+
+      {/* Recent Summaries */}
+      <RecentSummaries onLoadSummary={loadRecentSummary} />
     </div>
   );
 };

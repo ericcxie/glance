@@ -17,7 +17,7 @@ export default function GlancePage() {
   const [chatInput, setChatInput] = useState("");
   const [chatLoading, setChatLoading] = useState(false);
 
-  const mockSummaries: Record<string, Omit<Summary, "handle">> = {
+  const mockSummaries: Record<string, Omit<Summary, "handle" | "timestamp">> = {
     "@alex_dev": {
       text: "AI-focused developer building the future of software. Recently excited about new ML frameworks and startup challenges.",
       tags: ["AI", "Dev", "Startups"],
