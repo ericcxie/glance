@@ -22,7 +22,13 @@ export const SummaryView = ({
       <div className="p-8 rounded-3xl bg-white/5 backdrop-blur-xl border border-white/10 shadow-2xl">
         <div className="space-y-6">
           {/* Handle */}
-          <div className="flex items-center justify-center gap-2 pb-4 border-b border-white/10">
+          <div
+            className="flex items-center justify-center gap-2 pb-4 border-b border-white/10 cursor-pointer rounded-lg px-3 py-2 transition-all duration-200"
+            onClick={() => {
+              const username = summary.handle.replace("@", "");
+              window.open(`https://x.com/${username}`, "_blank");
+            }}
+          >
             <XLogo className="w-4 h-4 text-blue-400" />
             <span className="text-white font-medium">{summary.handle}</span>
           </div>

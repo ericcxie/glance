@@ -55,7 +55,7 @@ export const RecentSummaries = ({ onLoadSummary }: RecentSummariesProps) => {
           <button
             key={`${recent.handle}-${recent.timestamp}`}
             onClick={() => onLoadSummary(recent)}
-            className="w-full p-3 rounded-2xl bg-white/5 hover:bg-white/10 border border-white/10 transition-all duration-200 text-left group"
+            className="w-full cursor-pointer p-3 rounded-2xl bg-white/5 hover:bg-white/10 border border-white/10 transition-all duration-200 text-left group"
           >
             <div className="flex items-center justify-between mb-2">
               <div className="flex items-center gap-2">

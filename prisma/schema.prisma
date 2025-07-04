@@ -29,6 +29,9 @@ model Summary {
   // Tweet metadata
   tweetCount Int
   
+  // Relationship to tweets
+  tweets    Tweet[]
+  
   // Timestamps
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -36,4 +39,27 @@ model Summary {
   // Index for faster lookups
   @@index([username])
   @@map("summaries")
+}
+
+model Tweet {
+  id          String   @id @default(cuid())
+  tweetId     String   @unique // Twitter's tweet ID
+  text        String   // Cleaned tweet text
+  twitterCreatedAt DateTime // When the tweet was posted
+  
+  // Basic engagement metrics
+  likes       Int      @default(0)
+  retweets    Int      @default(0)
+  
+  // Relationship to summary
+  summaryId   String
+  summary     Summary @relation(fields: [summaryId], references: [id], onDelete: Cascade)
+  
+  // Timestamps
+  createdAt   DateTime @default(now())
+  
+  // Index for faster lookups
+  @@index([tweetId])
+  @@index([summaryId])
+  @@map("tweets")
 }

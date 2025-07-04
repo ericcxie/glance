@@ -4,6 +4,7 @@ import { Input } from "@/components/ui/input";
 import { Loader2, Send, ArrowLeft } from "lucide-react";
 import { XLogo } from "./XLogo";
 import { Summary, Message } from "@/types";
+import { useEffect, useRef } from "react";
 
 interface ChatViewProps {
   summary: Summary;
@@ -26,6 +27,13 @@ export const ChatView = ({
   setChatLoading,
   backToSummary,
 }: ChatViewProps) => {
+  const messagesEndRef = useRef<HTMLDivElement>(null);
+
+  // Auto-scroll to bottom when messages change
+  useEffect(() => {
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  }, [messages, chatLoading]);
+
   const handleChatSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!chatInput.trim() || chatLoading) return;
@@ -35,19 +43,48 @@ export const ChatView = ({
     setMessages((prev) => [...prev, { role: "user", content: userMessage }]);
     setChatLoading(true);
 
-    await new Promise((resolve) => setTimeout(resolve, 1500));
+    try {
+      const response = await fetch("/api/chat", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          username: summary.handle,
+          question: userMessage,
+        }),
+      });
 
-    const mockResponses = [
-      `Based on ${summary.handle}'s recent activity, they seem to focus heavily on their core interests. Their engagement patterns suggest they're quite active in their community.`,
-      `From what I can see in ${summary.handle}'s posts, they tend to share insights that align with their professional background and personal interests.`,
-      `${summary.handle} appears to be someone who values meaningful conversations and often engages with topics that matter to their field.`,
-      `Looking at their posting patterns, ${summary.handle} seems to maintain a consistent voice and perspective across their content.`,
-    ];
+      const data = await response.json();
 
-    const response =
-      mockResponses[Math.floor(Math.random() * mockResponses.length)];
-    setMessages((prev) => [...prev, { role: "assistant", content: response }]);
-    setChatLoading(false);
+      if (data.success) {
+        setMessages((prev) => [
+          ...prev,
+          { role: "assistant", content: data.data.response },
+        ]);
+      } else {
+        setMessages((prev) => [
+          ...prev,
+          {
+            role: "assistant",
+            content:
+              data.error ||
+              "Sorry, I couldn't process your question. Please try again.",
+          },
+        ]);
+      }
+    } catch (error) {
+      console.error("Error sending message:", error);
+      setMessages((prev) => [
+        ...prev,
+        {
+          role: "assistant",
+          content: "Sorry, something went wrong. Please try again.",
+        },
+      ]);
+    } finally {
+      setChatLoading(false);
+    }
   };
 
   return (
@@ -62,7 +99,13 @@ export const ChatView = ({
         >
           <ArrowLeft className="w-4 h-4" />
         </Button>
-        <div className="flex items-center gap-2">
+        <div
+          className="flex items-center gap-2 cursor-pointer rounded-lg px-3 py-2 transition-all duration-200"
+          onClick={() => {
+            const username = summary.handle.replace("@", "");
+            window.open(`https://x.com/${username}`, "_blank");
+          }}
+        >
           <XLogo className="w-4 h-4 text-blue-400" />
           <span className="text-white font-medium">{summary.handle}</span>
         </div>
@@ -96,6 +139,8 @@ export const ChatView = ({
             </div>
           </div>
         )}
+        {/* Invisible element to scroll to */}
+        <div ref={messagesEndRef} />
       </div>
 
       {/* Chat Input */}

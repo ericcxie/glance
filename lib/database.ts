@@ -22,6 +22,14 @@ export interface CachedSummary {
   updatedAt: Date;
 }
 
+export interface StoredTweet {
+  tweetId: string;
+  text: string;
+  twitterCreatedAt: Date;
+  likes: number;
+  retweets: number;
+}
+
 export class DatabaseService {
   /**
    * Get a cached summary by username
@@ -54,14 +62,15 @@ export class DatabaseService {
   }
 
   /**
-   * Store a new summary or update existing one
+   * Store a new summary or update existing one with tweets
    */
   async storeSummary(
     username: string,
     name: string,
     glanceSummary: GlanceSummary,
     tweetCount: number,
-    openaiResponse: any
+    openaiResponse: any,
+    tweets?: StoredTweet[]
   ): Promise<CachedSummary> {
     try {
       const summary = await prisma.summary.upsert({
@@ -84,6 +93,11 @@ export class DatabaseService {
         },
       });
 
+      // Store tweets if provided
+      if (tweets && tweets.length > 0) {
+        await this.storeTweets(summary.id, tweets);
+      }
+
       return {
         id: summary.id,
         username: summary.username,
@@ -98,6 +112,58 @@ export class DatabaseService {
     } catch (error) {
       console.error("Error storing summary:", error);
       throw new Error("Failed to store summary");
+    }
+  }
+
+  /**
+   * Store tweets for a summary
+   */
+  async storeTweets(summaryId: string, tweets: StoredTweet[]): Promise<void> {
+    try {
+      // First, delete existing tweets for this summary to avoid duplicates
+      await prisma.tweet.deleteMany({
+        where: { summaryId },
+      });
+
+      // Insert new tweets
+      await prisma.tweet.createMany({
+        data: tweets.map((tweet) => ({
+          tweetId: tweet.tweetId,
+          text: tweet.text,
+          twitterCreatedAt: tweet.twitterCreatedAt,
+          likes: tweet.likes,
+          retweets: tweet.retweets,
+          summaryId,
+        })),
+      });
+
+      console.log(`Stored ${tweets.length} tweets for summary ${summaryId}`);
+    } catch (error) {
+      console.error("Error storing tweets:", error);
+      throw new Error("Failed to store tweets");
+    }
+  }
+
+  /**
+   * Get tweets for a summary (for follow-up questions)
+   */
+  async getTweets(summaryId: string): Promise<StoredTweet[]> {
+    try {
+      const tweets = await prisma.tweet.findMany({
+        where: { summaryId },
+        orderBy: { twitterCreatedAt: "desc" },
+      });
+
+      return tweets.map((tweet) => ({
+        tweetId: tweet.tweetId,
+        text: tweet.text,
+        twitterCreatedAt: tweet.twitterCreatedAt,
+        likes: tweet.likes,
+        retweets: tweet.retweets,
+      }));
+    } catch (error) {
+      console.error("Error fetching tweets:", error);
+      return [];
     }
   }
 

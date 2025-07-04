@@ -1,7 +1,7 @@
 import { NextApiRequest, NextApiResponse } from "next";
 import { createTwitterAPI } from "../../lib/twitter";
 import { createOpenAIService } from "../../lib/openai";
-import { databaseService } from "../../lib/database";
+import { databaseService, StoredTweet } from "../../lib/database";
 
 export interface SummarizeRequest {
   handle: string;
@@ -107,10 +107,8 @@ export default async function handler(
     const openAIService = createOpenAIService();
 
     // Fetch tweets
-    const { tweets, userInfo } = await twitterAPI.getTweetsForSummary(
-      cleanHandle,
-      50
-    );
+    const { tweets, simpleTweets, userInfo } =
+      await twitterAPI.getTweetsForSummary(cleanHandle, 5);
 
     if (!userInfo) {
       return res.status(404).json({
@@ -120,6 +118,15 @@ export default async function handler(
     }
 
     console.log(`Found ${tweets.length} tweets for ${userInfo.username}`);
+
+    // Convert SimpleTweet to StoredTweet format
+    const storedTweets: StoredTweet[] = simpleTweets.map((tweet) => ({
+      tweetId: tweet.tweetId,
+      text: tweet.text,
+      twitterCreatedAt: tweet.twitterCreatedAt,
+      likes: tweet.likes,
+      retweets: tweet.retweets,
+    }));
 
     // Generate summary
     const isDetailed = detailed === "true" || detailed === "1";
@@ -138,7 +145,8 @@ export default async function handler(
         userInfo.name,
         { summary: analysis.summary, tags: analysis.topics || [] },
         tweets.length,
-        analysis
+        analysis,
+        storedTweets
       );
 
       return res.status(200).json({
@@ -169,7 +177,8 @@ export default async function handler(
         userInfo.name,
         glanceSummary,
         tweets.length,
-        glanceSummary
+        glanceSummary,
+        storedTweets
       );
 
       return res.status(200).json({

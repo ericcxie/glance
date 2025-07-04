@@ -200,12 +200,13 @@ Summary:`;
     if (tweets.length === 0) {
       return {
         summary: "This user hasn't posted any recent tweets to analyze.",
-        topics: [],
+        topics: ["quiet"],
         sentiment: "neutral",
         engagement: "low",
       };
     }
 
+    // Prepare the tweets for the prompt
     const tweetsText = tweets
       .slice(0, 5) // Limit to 5 tweets to match Twitter API limits
       .map((tweet, index) => `${index + 1}. ${tweet}`)
@@ -215,32 +216,27 @@ Summary:`;
       ? `@${username}${name ? ` (${name})` : ""}`
       : "This user";
 
-    const prompt = `Analyze the following recent tweets and provide a structured analysis:
+    const prompt = `Analyze the following recent tweets and provide a detailed analysis with JSON structure:
 
 Recent tweets from ${userInfo}:
 ${tweetsText}
 
-Please provide a JSON response with the following structure:
+Please provide a JSON response with this exact structure (no markdown formatting):
 {
-  "summary": "2-3 sentence summary of their recent activity",
+  "summary": "2-3 sentences about their recent activity and interests",
   "topics": ["topic1", "topic2", "topic3"],
-  "sentiment": "positive/negative/neutral/mixed",
+  "sentiment": "positive/negative/neutral",
   "engagement": "high/medium/low"
 }
 
-Analysis:`;
+Return only the JSON object, no additional text or markdown formatting:`;
 
     try {
       const response = await this.openai.chat.completions.create({
         model: "gpt-4o-mini",
-        messages: [
-          {
-            role: "user",
-            content: prompt,
-          },
-        ],
+        messages: [{ role: "user", content: prompt }],
         max_tokens: 200,
-        temperature: 0.5,
+        temperature: 0.7,
       });
 
       const content = response.choices[0]?.message?.content?.trim();
@@ -250,13 +246,27 @@ Analysis:`;
       }
 
       try {
-        const analysis = JSON.parse(content);
-        return analysis;
+        // Clean up markdown formatting if present
+        let cleanContent = content;
+        if (content.includes("```json")) {
+          cleanContent = content
+            .replace(/```json\n?/g, "")
+            .replace(/```/g, "")
+            .trim();
+        }
+
+        const parsed = JSON.parse(cleanContent);
+        return {
+          summary: parsed.summary || content,
+          topics: parsed.topics || ["general"],
+          sentiment: parsed.sentiment || "neutral",
+          engagement: parsed.engagement || "medium",
+        };
       } catch (parseError) {
-        // Fallback to simple summary if JSON parsing fails
+        console.error("JSON parsing failed:", parseError);
         return {
           summary: content,
-          topics: [],
+          topics: ["general"],
           sentiment: "neutral",
           engagement: "medium",
         };
@@ -264,6 +274,31 @@ Analysis:`;
     } catch (error) {
       console.error("Error generating detailed analysis:", error);
       throw new Error("Failed to generate detailed analysis");
+    }
+  }
+
+  /**
+   * Generate a chat completion response for follow-up questions
+   */
+  async getChatCompletion(prompt: string): Promise<string> {
+    try {
+      const response = await this.openai.chat.completions.create({
+        model: "gpt-4o-mini",
+        messages: [{ role: "user", content: prompt }],
+        max_tokens: 75,
+        temperature: 0.7,
+      });
+
+      const content = response.choices[0]?.message?.content?.trim();
+
+      if (!content) {
+        throw new Error("No response generated");
+      }
+
+      return content;
+    } catch (error) {
+      console.error("Error generating chat completion:", error);
+      throw new Error("Failed to generate response");
     }
   }
 }

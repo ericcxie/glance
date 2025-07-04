@@ -81,20 +81,6 @@ export const HandleInputForm = ({
           </Button>
         </form>
       </div>
-
-      {/* Example handles */}
-      <div className="flex justify-center gap-2">
-        {["@alex_dev", "@sarah_design", "@mike_crypto"].map((exampleHandle) => (
-          <button
-            key={exampleHandle}
-            onClick={() => setHandle(exampleHandle)}
-            className="px-3 py-1 text-xs text-gray-400 hover:text-white bg-white/5 hover:bg-white/10 rounded-full border border-white/10 transition-all duration-200"
-          >
-            {exampleHandle}
-          </button>
-        ))}
-      </div>
-
       {/* Recent Summaries */}
       <RecentSummaries onLoadSummary={loadRecentSummary} />
     </div>
