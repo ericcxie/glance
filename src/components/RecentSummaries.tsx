@@ -50,7 +50,7 @@ export const RecentSummaries = ({ onLoadSummary }: RecentSummariesProps) => {
         <Clock className="w-4 h-4 text-gray-400" />
         <h3 className="text-sm font-medium text-gray-300">Recent Summaries</h3>
       </div>
-      <div className="space-y-3">
+      <div className="space-y-3 max-h-80 overflow-y-auto hide-scrollbar">
         {recentSummaries.map((recent, index) => (
           <button
             key={`${recent.handle}-${recent.timestamp}`}
