@@ -5,7 +5,6 @@
       </ul>
     </div>
     <h3>Your AI cheat sheet before every connection.</h3>
-    <h4><i>Summarize anyone’s online X (Twitter) presence at a glance.</i></h4>
     <br>
     <img src="https://img.shields.io/badge/Next.js-000000?style=for-the-badge&logo=next.js&logoColor=white"/>
     <img src="https://img.shields.io/badge/OpenAI-412991?style=for-the-badge&logo=openai&logoColor=white"/>
