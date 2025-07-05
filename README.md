@@ -20,7 +20,7 @@ https://github.com/user-attachments/assets/4639b19a-cd02-47bd-8c54-167e2c35ec9d
 
 Imagine you’re at a YC afterparty and someone drops their X handle. You pull out your phone, plug it into Glance, and in seconds, you know what they’ve been tweeting about lately — AI, startups, maybe a hot take on fundraising. You instantly get their vibe, without scrolling through a single post.
 
-Glance is your AI-powered social cheat sheet. It summarizes any public X (Twitter) user's recent tweets into a short, insightful snapshot of their interests, tone, and current focus. Whether you're networking, recruiting, or just curious, Glance helps you understand people faster. Want to dig deeper? Ask follow-up questions and get conversational answers — all based on what they’ve actually posted.
+Glance is your AI-powered social cheat sheet. It summarizes any public X (Twitter) user's recent tweets into a short, insightful snapshot of their interests, tone, and current focus. Whether you're networking, recruiting, or just curious, Glance helps you understand people faster. Want to dig deeper? Ask follow-up questions and get conversational answers!
 
 ## System Architecture
 
