@@ -14,7 +14,7 @@
     <br><br>
 </div>
 
-![Screenshot 2025-07-05 at 14 02 35@2x1](https://github.com/user-attachments/assets/7c1eb06b-505c-4864-a096-056cacd52b03)
+![1](https://github.com/user-attachments/assets/59b8d28d-3a45-445e-9721-c1cc2a41d706)
 
 ## What is Glance?
 
@@ -182,3 +182,6 @@ glance/
 │       └── utils.ts    # Utility functions
 └── ...
 ```
+
+![3](https://github.com/user-attachments/assets/efbfd46b-d5e8-4897-83db-ead2d576aac9)
+![2](https://github.com/user-attachments/assets/c6b70522-de28-4f2b-ad1f-a3668092c2c0)
