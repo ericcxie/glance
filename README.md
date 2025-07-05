@@ -14,7 +14,7 @@
     <br><br>
 </div>
 
-![Screenshot 2025-07-04 at 18 39 15@2x](https://github.com/user-attachments/assets/101c7f9c-df51-4b35-8cde-08fb0aa45c4d)
+![Screenshot 2025-07-05 at 14 02 35@2x](https://github.com/user-attachments/assets/13709919-5f7f-4a54-a9a9-fef6c55207dc)
 
 ## What is Glance?
 
