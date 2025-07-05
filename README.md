@@ -24,7 +24,7 @@ Glance is your AI-powered social cheat sheet. It summarizes any public X (Twitte
 
 ## System Architecture
 
-![glance_diagram](https://github.com/user-attachments/assets/578a3ef0-75ca-40de-8f92-ca31d1527d19)
+![glance_diagram](https://github.com/user-attachments/assets/6c2754b7-c47d-479c-9b65-b0e97b61e7e1)
 
 ## Getting Started
 
