@@ -18,13 +18,13 @@
 
 ## What is Glance?
 
-_Glance is a modern AI-powered social summarization tool that provides intelligent analysis of public X (Twitter) users' recent tweets. It helps you understand their interests, mood, and current topics without scrolling through endless timelines._
+_Glance is an AI-powered tool that distills any public X (Twitter) user's recent tweets into a concise, insightful summary. In seconds, it reveals their interests, tone, and current focus—perfect for networking, outreach, research, or hiring. You can also ask follow-up questions to dive deeper into what someone’s been talking about, without ever scrolling through their timeline._
 
 ## Getting Started
 
 ### Environment Variables
 
-Create a `.env.local` file in the root directory with the following variables:
+Create a `.env` file in the root directory with the following variables:
 
 ```env
 # X (Twitter) API v2 Bearer Token
@@ -34,23 +34,12 @@ TWITTER_BEARER_TOKEN=your_twitter_bearer_token_here
 # OpenAI API Key
 # Get this from https://platform.openai.com/account/api-keys
 OPENAI_API_KEY=your_openai_api_key_here
+
+# Database (Supabase + Prisma)
+DATABASE_URL=your_supabase_database_url_here
+NEXT_PUBLIC_SUPABASE_URL=your_supabase_project_url_here
+NEXT_PUBLIC_SUPABASE_ANON_KEY=your_supabase_anon_key_here
 ```
-
-### Getting API Keys
-
-#### Twitter API v2 Bearer Token:
-
-1. Go to [Twitter Developer Portal](https://developer.twitter.com/en/portal/dashboard)
-2. Create a new app or use an existing one
-3. Navigate to "Keys and Tokens"
-4. Generate a Bearer Token
-5. Copy the Bearer Token to your `.env.local` file
-
-#### OpenAI API Key:
-
-1. Go to [OpenAI Platform](https://platform.openai.com/account/api-keys)
-2. Create a new API key
-3. Copy the API key to your `.env.local` file
 
 ### Installation and Setup
 
@@ -60,13 +49,23 @@ OPENAI_API_KEY=your_openai_api_key_here
    npm install
    ```
 
-2. **Start the development server**
+2. **Set up the database**
+
+   ```bash
+   # Generate Prisma client
+   npx prisma generate
+
+   # Run database migrations
+   npx prisma db push
+   ```
+
+3. **Start the development server**
 
    ```bash
    npm run dev
    ```
 
-3. **Open your browser**
+4. **Open your browser**
 
    Navigate to [http://localhost:3000](http://localhost:3000) to see the application.
 
@@ -93,6 +92,25 @@ curl "http://localhost:3000/api/summarize?handle=elonmusk&detailed=true"
 
 #### Response Format
 
+**Simple Summary:**
+
+```json
+{
+  "success": true,
+  "data": {
+    "summary": "User's recent activity summary...",
+    "tags": ["AI", "Tesla", "SpaceX"],
+    "userInfo": {
+      "username": "elonmusk",
+      "name": "Elon Musk"
+    },
+    "tweetCount": 25
+  }
+}
+```
+
+**Detailed Analysis:**
+
 ```json
 {
   "success": true,
@@ -106,6 +124,38 @@ curl "http://localhost:3000/api/summarize?handle=elonmusk&detailed=true"
     "topics": ["AI", "Tesla", "SpaceX"],
     "sentiment": "positive",
     "engagement": "high"
+  }
+}
+```
+
+### POST /api/chat
+
+Ask follow-up questions about a Twitter user.
+
+#### Parameters
+
+```json
+{
+  "username": "elonmusk",
+  "question": "What projects are they working on?"
+}
+```
+
+#### Example
+
+```bash
+curl -X POST "http://localhost:3000/api/chat" \
+  -H "Content-Type: application/json" \
+  -d '{"username": "elonmusk", "question": "What projects are they working on?"}'
+```
+
+#### Response Format
+
+```json
+{
+  "success": true,
+  "data": {
+    "response": "Based on their recent tweets, they're focusing on..."
   }
 }
 ```
@@ -132,20 +182,3 @@ glance/
 │       └── utils.ts    # Utility functions
 └── ...
 ```
-
-## Features
-
-- **Simple API**: Just provide a Twitter handle
-- **Smart Filtering**: Automatically filters out replies and retweets
-- **AI-Powered**: Uses OpenAI to generate natural language summaries
-- **Detailed Analysis**: Optional detailed breakdown with topics and sentiment
-- **Error Handling**: Comprehensive error handling for various scenarios
-- **Full-Stack**: Built with Next.js (frontend + API routes) and Tailwind CSS
-
-## Future Enhancements
-
-### Follow-up Questions (Post-MVP)
-
-- Allow users to ask follow-up questions about the user's tweets
-- Examples: "What projects are they working on?", "Are they hiring?", "What's their opinion on AI?"
-- Interactive chat interface for deeper insights
