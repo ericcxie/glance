@@ -14,7 +14,8 @@
     <br><br>
 </div>
 
-![1](https://github.com/user-attachments/assets/59b8d28d-3a45-445e-9721-c1cc2a41d706)
+
+https://github.com/user-attachments/assets/0909d703-aaaa-4399-8ec5-4f15776ae1a6
 
 ## What is Glance?
 
@@ -193,5 +194,6 @@ glance/
 └── ...
 ```
 
+![1](https://github.com/user-attachments/assets/59b8d28d-3a45-445e-9721-c1cc2a41d706)
 ![2](https://github.com/user-attachments/assets/efbfd46b-d5e8-4897-83db-ead2d576aac9)
 ![3](https://github.com/user-attachments/assets/c6b70522-de28-4f2b-ad1f-a3668092c2c0)
