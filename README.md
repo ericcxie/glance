@@ -22,6 +22,10 @@ Imagine you’re at a YC afterparty and someone drops their X handle. You pull o
 
 Glance is your AI-powered social cheat sheet. It summarizes any public X (Twitter) user's recent tweets into a short, insightful snapshot of their interests, tone, and current focus. Whether you're networking, recruiting, or just curious, Glance helps you understand people faster. Want to dig deeper? Ask follow-up questions and get conversational answers — all based on what they’ve actually posted.
 
+## System Architecture
+
+![glance_diagram](https://github.com/user-attachments/assets/578a3ef0-75ca-40de-8f92-ca31d1527d19)
+
 ## Getting Started
 
 ### Environment Variables
