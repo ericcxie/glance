@@ -87,9 +87,9 @@ Please provide a brief, conversational response (1-2 sentences max) based on the
 - Always lead with specific tweet content when relevant
 - Only mention well-established facts, avoid speculation
 
-IMPORTANT: If the question asks for any kind of message, invite, connection request, or outreach (like "help me write...", "draft a message", "coffee chat invite", etc.), write it as if you're messaging ${cachedSummary.name} directly using "you/your", not "they/their".
+If the user is asking for help writing a message or invite, respond as if you're speaking directly to ${cachedSummary.name} — use 'you' and 'your' instead of 'they' or 'their'.
 
-Talk like you're chatting with a friend who follows this person on Twitter.`;
+Your tone should be friendly and casual — like someone explaining this person to a peer who follows them on Twitter.`;
 
     // Get response from OpenAI
     const response = await openAIService.getChatCompletion(prompt);

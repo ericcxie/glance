@@ -165,17 +165,27 @@ curl -X POST "http://localhost:3000/api/chat" \
 ```
 glance/
 ├── lib/
-│   ├── twitter.ts      # X API integration
-│   └── openai.ts       # OpenAI API integration
+│   ├── database.ts     # Database service (Supabase + Prisma)
+│   ├── openai.ts       # OpenAI API integration
+│   ├── seed.ts         # Database seeding utilities
+│   └── twitter.ts      # X API integration
 ├── pages/
 │   └── api/            # Next.js API routes
+│       ├── chat.ts     # Follow-up questions endpoint
 │       ├── health.ts   # Health check endpoint
-│       ├── summarize.ts # Main API endpoint
+│       ├── summarize.ts # Main summarization endpoint
+│       ├── test-cache.ts # Cache testing endpoint
 │       └── tweets.ts   # Tweet fetching endpoint
+├── prisma/
+│   ├── migrations/     # Database migrations
+│   └── schema.prisma   # Database schema
+├── scripts/
+│   └── add-elon.ts     # Utility scripts
 ├── src/
 │   ├── app/            # Next.js app router
 │   │   ├── layout.tsx
-│   │   └── page.tsx
+│   │   ├── page.tsx
+│   │   └── summary/    # Summary pages
 │   ├── components/
 │   │   └── ui/         # UI components
 │   └── lib/
@@ -183,5 +193,5 @@ glance/
 └── ...
 ```
 
-![3](https://github.com/user-attachments/assets/efbfd46b-d5e8-4897-83db-ead2d576aac9)
-![2](https://github.com/user-attachments/assets/c6b70522-de28-4f2b-ad1f-a3668092c2c0)
+![2](https://github.com/user-attachments/assets/efbfd46b-d5e8-4897-83db-ead2d576aac9)
+![3](https://github.com/user-attachments/assets/c6b70522-de28-4f2b-ad1f-a3668092c2c0)
