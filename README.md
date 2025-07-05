@@ -14,8 +14,7 @@
     <br><br>
 </div>
 
-
-https://github.com/user-attachments/assets/0909d703-aaaa-4399-8ec5-4f15776ae1a6
+https://github.com/user-attachments/assets/4639b19a-cd02-47bd-8c54-167e2c35ec9d
 
 ## What is Glance?
 
